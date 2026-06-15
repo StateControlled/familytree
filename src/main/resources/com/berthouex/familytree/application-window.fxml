@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+
+<!-- This is the primary screen the user will interact with -->
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.berthouex.familytree.controller.ApplicationWindow"
+            stylesheets="@css/window-styles.css">
+
+    <!-- TOP -->
+    <top>
+        <VBox fx:id="header">
+            <HBox alignment="CENTER_LEFT" styleClass="header-bar" spacing="8">
+                <padding> <!-- Padding for the HBox itself -->
+                    <Insets top="12" right="16" bottom="12" left="16"/>
+                </padding>
+
+                <Button fx:id="newGraphButton" text="New Tree" onAction="#createNewGraph" styleClass="button"/>
+                <Button fx:id="openButton" text="Open" onAction="#open" styleClass="button"/>
+                <Button fx:id="saveButton" text="Save" onAction="#save" styleClass="button" disable="true"/>
+                <!-- <Button fx:id="saveAs" text="Save As..." onAction="#saveAs" styleClass="button"/> -->
+                <Pane HBox.hgrow="ALWAYS"/> <!--A dynamic spacer between controls-->
+
+                <Button fx:id="helpButton" text="Help" onAction="#showHelp" styleClass="button"/>
+                <Button fx:id="exitButton" text="Exit" onAction="#exitApplication" styleClass="button"/>
+
+            </HBox>
+        </VBox>
+
+    </top>
+
+    <!-- CENTER -->
+    <!-- Where the Tree will be displayed -->
+    <center>
+        <!-- placeholder when no Graph is open -->
+        <VBox fx:id="emptyState" alignment="CENTER" VBox.vgrow="ALWAYS" spacing="16" styleClass="empty-state">
+            <Label text="No Tree selected" styleClass="empty-state"/>
+            <Label text="Create a new Tree or open an existing one." styleClass="empty-state"/>
+        </VBox>
+
+        <Pane fx:id="contentPane">
+
+        </Pane>
+    </center>
+
+    <!-- LEFT -->
+    <!-- Controls to add, edit, remove nodes from the Tree -->
+    <left>
+        <VBox fx:id="leftControlPanel" alignment="CENTER_LEFT" spacing="8" styleClass="left-control-panel" disable="true">
+            <padding> <!--Padding for the VBox itself-->
+                <Insets top="8" right="12" bottom="8" left="12"/>
+            </padding>
+            <Label fx:id="leftLabel" text="Edit" styleClass="label"/>
+
+            <Button fx:id="createNewNode" text="New Node" onAction="#createNewNode" styleClass="button"/>
+            <Button fx:id="editNode" text="Edit Node" onAction="#editNode" styleClass="button"/>
+            <Button fx:id="closeTree" text="Close Tree" onAction="#closeGraph" styleClass="button"/>
+            <Separator/>
+            <Label fx:id="listSelectorLabel" text="Open Trees:" styleClass="label"/>
+            <ListView fx:id="listSelector" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </left>
+
+    <!-- RIGHT -->
+    <right>
+        <VBox alignment="TOP_CENTER">
+            <padding> <!--Padding for the VBox itself-->
+                <Insets top="8" right="10" bottom="8" left="10"/>
+            </padding>
+
+            <Label fx:id="statusLabel" text="Ready"/>
+        </VBox>
+    </right>
+
+    <!-- BOTTOM -->
+    <bottom>
+        <HBox alignment="CENTER" styleClass="header-bar">
+            <padding> <!-- Padding for the HBox itself -->
+                <Insets top="12" right="16" bottom="12" left="16"/>
+            </padding>
+
+            <Label text="Tree Builder" styleClass="footer"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

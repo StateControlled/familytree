@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.berthouex.familytree.controller.GraphModal"
+      stylesheets="@../css/window-styles.css">
+
+    <padding>
+        <Insets top="24" right="24" bottom="24" left="24"/>
+    </padding>
+
+    <VBox spacing="8">
+        <padding>
+            <Insets top="12" right="12" bottom="12" left="12"/>
+        </padding>
+
+        <Label fx:id="graphDialogTitle" text="Create A New Tree" styleClass="dialog-label"/>
+        <HBox>
+            <Label text="Name: " styleClass="dialog-label"/>
+            <TextField fx:id="nameField" promptText="Name Your Family Tree"/>
+        </HBox>
+    </VBox>
+
+    <Separator/>
+
+    <HBox alignment="CENTER_LEFT">
+        <padding>
+            <Insets top="12" right="12" bottom="12" left="12"/>
+        </padding>
+
+        <Button fx:id="createButton" text="Create" styleClass="button" onAction="#createGraph" defaultButton="true"/>
+        <Button fx:id="cancelButton" text="Cancel" styleClass="button" onAction="#cancel"/>
+    </HBox>
+
+</VBox>
