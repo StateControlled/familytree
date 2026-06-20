@@ -8,6 +8,7 @@ module com.berthouex.familytree {
     requires java.net.http;
     requires java.xml;
     requires javafx.graphics;
+    requires javafx.base;
 
     opens com.berthouex.familytree to javafx.fxml;
     exports com.berthouex.familytree;

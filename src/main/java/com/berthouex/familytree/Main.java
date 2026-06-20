@@ -3,6 +3,7 @@ package com.berthouex.familytree;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -20,6 +21,12 @@ public class Main extends Application {
 
         // TODO consider removing default window controls (close, minimize, maximize)
         stage.setTitle("Family Tree");
+        try {
+            Image icon = new Image(Main.class.getResourceAsStream("images/tree_64x.png"));
+            stage.getIcons().add(icon);
+        } catch (NullPointerException ignored) {
+
+        }
         stage.setScene(scene);
         stage.show();
     }

@@ -88,27 +88,27 @@ public class GraphNode extends StackPane {
 
         }
 
-        public Builder setFirstName(String firstName) {
+        public Builder firstName(String firstName) {
             this.firstName = firstName;
             return this;
         }
 
-        public Builder setLastName(String lastName) {
+        public Builder lastName(String lastName) {
             this.lastName = lastName;
             return this;
         }
 
-        public Builder setDescription(String description) {
+        public Builder description(String description) {
             this.description = description;
             return this;
         }
 
-        public Builder setBirthDate(LocalDate birthDate) {
+        public Builder birthDate(LocalDate birthDate) {
             this.birthDate = birthDate;
             return this;
         }
 
-        public Builder setDeathDate(LocalDate deathDate) {
+        public Builder deathDate(LocalDate deathDate) {
             this.deathDate = deathDate;
             return this;
         }

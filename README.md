@@ -1,5 +1,7 @@
 # Family Tree
 
+![Budding Tree Image](images/tree_64x.png)
+
 ## About The Project
 
 ---

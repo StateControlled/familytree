@@ -2,10 +2,12 @@ package com.berthouex.familytree.controller;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -78,12 +80,41 @@ public class ApplicationWindow implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        Graph test = new Graph("Berthouex Family");
+        GraphNode.Builder b0 = new GraphNode.Builder()
+            .firstName("Will")
+            .lastName("Berthouex")
+            .description("Is cool");
+        GraphNode n0 = b0.build();
+        GraphNode.Builder b1 = new GraphNode.Builder()
+            .firstName("Andrew")
+            .lastName("Berthouex")
+            .description("Is sometimes cool");
+        GraphNode n1 = b1.build();
+        GraphNode.Builder b2 = new GraphNode.Builder()
+            .firstName("Amy")
+            .lastName("Berthouex")
+            .description("Is loved");
+        GraphNode n2 = b2.build();
+
+        test.addNode(n0);
+        test.addNode(n1);
+        test.addNode(n2);
+
+        contentPane.getChildren().addAll(test.getNodes());
+
+
         this.openGraphs = FXCollections.observableArrayList();
         this.listSelector.setItems(openGraphs);
         this.listSelector.setCellFactory(view -> new GraphCell());
         this.listSelector.getSelectionModel()
             .selectedItemProperty()
             .addListener((observable, oldGraph, newGraph) -> selectGraph(newGraph));
+
+        this.contentPane.getChildren().addListener((ListChangeListener<Node>) change -> {
+            // TODO
+        });
     }
 
     private void selectGraph(Graph graph) {
@@ -92,6 +123,12 @@ public class ApplicationWindow implements Initializable {
         emptyState.setManaged(!hasGraph);
 
         contentPane.setManaged(hasGraph);
+
+        if (graph != null) {
+            contentPane.getChildren().addAll(graph.getNodes());
+            currentGraph = graph;
+        }
+
         saveButton.setDisable(!hasGraph);
         leftControlPanel.setDisable(!hasGraph);
     }

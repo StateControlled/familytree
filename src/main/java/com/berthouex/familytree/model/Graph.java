@@ -1,6 +1,9 @@
 package com.berthouex.familytree.model;
 
-import java.util.ArrayList;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -10,17 +13,21 @@ import java.util.UUID;
 public class Graph {
     private final String id;
     private final String graphName;
-    private final List<GraphNode> graphNodes;
+    private final ObservableList<GraphNode> graphNodes;
     private String filepath;
 
     public Graph(String graphName) {
         this.graphName = graphName;
-        this.graphNodes = new ArrayList<>();
+        this.graphNodes = FXCollections.observableArrayList();
         this.id = UUID.randomUUID().toString();
     }
 
     public boolean addNode(GraphNode graphNode) {
         return this.graphNodes.add(graphNode);
+    }
+
+    public void addListener(ListChangeListener<GraphNode> listener) {
+        graphNodes.addListener(listener);
     }
 
     public List<GraphNode> getNodes() {

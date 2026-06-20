@@ -1,8 +1,5 @@
 package com.berthouex.familytree.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -10,8 +7,6 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import org.controlsfx.control.ToggleSwitch;
@@ -69,19 +64,19 @@ public class NewNodeModal implements Initializable {
         GraphNode.Builder builder = new GraphNode.Builder();
 
         if (!firstName.isEmpty()) {
-            builder.setFirstName(firstName);
+            builder.firstName(firstName);
         }
         if (!lastName.isEmpty()) {
-            builder.setLastName(lastName);
+            builder.lastName(lastName);
         }
         if (bDate != null) {
-            builder.setBirthDate(bDate);
+            builder.birthDate(bDate);
         }
         if (dDate != null) {
-            builder.setDeathDate(dDate);
+            builder.deathDate(dDate);
         }
         if (!description.isEmpty()) {
-            builder.setDescription(description);
+            builder.description(description);
         }
 
         result = builder.build();
