@@ -3,6 +3,7 @@ package com.berthouex.familytree.model;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.scene.layout.Pane;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,8 +27,24 @@ public class Graph {
         return this.graphNodes.add(graphNode);
     }
 
-    public void addListener(ListChangeListener<GraphNode> listener) {
-        graphNodes.addListener(listener);
+    public boolean hasNodes() {
+        return !graphNodes.isEmpty();
+    }
+
+    public void addListener(Pane parent) {
+        graphNodes.addListener((ListChangeListener<GraphNode>) change -> {
+            try {
+                if (change.wasRemoved()) {
+                    parent.getChildren().removeAll(change.getRemoved());
+                }
+
+                if (change.wasAdded()) {
+                    parent.getChildren().addAll(change.getAddedSubList());
+                }
+            } catch (IllegalStateException ignored) {
+
+            }
+        });
     }
 
     public List<GraphNode> getNodes() {

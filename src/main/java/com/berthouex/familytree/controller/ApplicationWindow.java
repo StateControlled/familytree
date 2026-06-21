@@ -2,12 +2,10 @@ package com.berthouex.familytree.controller;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -32,9 +30,11 @@ import com.berthouex.familytree.model.GraphNode;
 /**
  * The primary window the user will interact with.
  */
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class ApplicationWindow implements Initializable {
     // Right pane
+    @FXML
+    private VBox rightControlPanel;
     @FXML
     private Label statusLabel;
 
@@ -80,30 +80,12 @@ public class ApplicationWindow implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        Graph test = new Graph("Berthouex Family");
-        GraphNode.Builder b0 = new GraphNode.Builder()
-            .firstName("Will")
-            .lastName("Berthouex")
-            .description("Is cool");
-        GraphNode n0 = b0.build();
-        GraphNode.Builder b1 = new GraphNode.Builder()
-            .firstName("Andrew")
-            .lastName("Berthouex")
-            .description("Is sometimes cool");
-        GraphNode n1 = b1.build();
-        GraphNode.Builder b2 = new GraphNode.Builder()
-            .firstName("Amy")
-            .lastName("Berthouex")
-            .description("Is loved");
-        GraphNode n2 = b2.build();
-
-        test.addNode(n0);
-        test.addNode(n1);
-        test.addNode(n2);
-
-        contentPane.getChildren().addAll(test.getNodes());
-
+        rightControlPanel.setPrefWidth(100);
+        rightControlPanel.setMinWidth(80);
+        rightControlPanel.setMaxWidth(120);
+        statusLabel.setWrapText(true);
+        statusLabel.prefWidthProperty().bind(rightControlPanel.widthProperty());
+        statusLabel.setText("Ready");
 
         this.openGraphs = FXCollections.observableArrayList();
         this.listSelector.setItems(openGraphs);
@@ -111,10 +93,6 @@ public class ApplicationWindow implements Initializable {
         this.listSelector.getSelectionModel()
             .selectedItemProperty()
             .addListener((observable, oldGraph, newGraph) -> selectGraph(newGraph));
-
-        this.contentPane.getChildren().addListener((ListChangeListener<Node>) change -> {
-            // TODO
-        });
     }
 
     private void selectGraph(Graph graph) {
@@ -125,8 +103,13 @@ public class ApplicationWindow implements Initializable {
         contentPane.setManaged(hasGraph);
 
         if (graph != null) {
-            contentPane.getChildren().addAll(graph.getNodes());
+            statusLabel.setText("Selected Graph " + graph.getGraphName());
+
+            if (graph.hasNodes()) {
+                clearAndUpdateContentPane();
+            }
             currentGraph = graph;
+            listSelector.getSelectionModel().select(graph);
         }
 
         saveButton.setDisable(!hasGraph);
@@ -134,7 +117,28 @@ public class ApplicationWindow implements Initializable {
     }
 
     /**
-     * Creates a new Tree
+     * Clears the ContentPane and adds all the <code>GraphNodes</code> from the current Graph.
+     * Does not check to see that {@link #currentGraph} is not <code>null</code> or that the {@link #currentGraph} has Nodes.
+     */
+    public void clearAndUpdateContentPane() {
+        contentPane.getChildren().clear();
+        updateContentPane();
+    }
+
+    /**
+     * Adds any <code>GraphNodes</code> that are not present on the ContentPane to the Pane.
+     * Does not check to see that {@link #currentGraph} is not <code>null</code> or that the {@link #currentGraph} has Nodes.
+     */
+    public void updateContentPane() {
+        currentGraph.getNodes().stream()
+            .filter(node -> !contentPane.getChildren().contains(node))
+            .forEach(node -> contentPane.getChildren().add(node));
+    }
+
+    /**
+     * Creates a new Tree.
+     * Opens a new <code>GraphModal</code> that allows the user to create a new <code>Graph</code>.
+     * If the user creates a new <code>Graph</code>, the Graph will be added to the left sidebar.
      */
     @FXML
     protected void createNewGraph() {
@@ -158,7 +162,6 @@ public class ApplicationWindow implements Initializable {
             stage.showAndWait();
 
             return graphModal.getResult();
-
         } catch (IOException e) {
             System.out.println("Failed to create a new dialog box: " + e.getMessage());
             e.printStackTrace();
@@ -167,6 +170,55 @@ public class ApplicationWindow implements Initializable {
 
     }
 
+    /**
+     * Create a new Node
+     */
+    @FXML
+    protected void createNewNode() {
+        if (currentGraph != null) {
+            Optional<GraphNode> result = showNodeDialog();
+
+            result.ifPresent(node -> {
+                currentGraph.addNode(node);
+                statusLabel.setText("Created New Node");
+            });
+            updateContentPane();
+        }
+    }
+
+    private Optional<GraphNode> showNodeDialog() {
+        try {
+            FXMLLoader loader = new FXMLLoader(ApplicationWindow.class.getResource("new-node-modal.fxml"));
+            Parent root = loader.load();
+            NewNodeModal nodeModal = loader.getController();
+
+            Stage stage = buildModal("Create New Node", root);
+            stage.showAndWait();
+
+            return nodeModal.getResult();
+        } catch (IOException e) {
+            System.out.println("Failed to create a new dialog box: " + e.getMessage());
+            e.printStackTrace();
+            return Optional.empty();
+        }
+
+    }
+
+    /**
+     * Clear list selection
+     */
+    private void clearSelection() {
+        listSelector.getSelectionModel().select(null);
+    }
+
+    /**
+     * Creates the basic modal window.
+     *
+     * @param title the window title
+     * @param root  the element the modal will be a child to
+     *
+     * @return  a <code>Stage</code> object, the modal
+     */
     private Stage buildModal(String title, Parent root) {
         Stage dialog = new Stage();
         dialog.initOwner(getStage());
@@ -182,6 +234,7 @@ public class ApplicationWindow implements Initializable {
 
     /**
      * Open an existing save file
+     * TODO implement functionality
      */
     @FXML
     protected void open() {
@@ -228,6 +281,7 @@ public class ApplicationWindow implements Initializable {
 
     /**
      * Save the current Tree
+     * TODO implement
      */
     @FXML
     protected void save() {
@@ -235,10 +289,17 @@ public class ApplicationWindow implements Initializable {
         doSave();
     }
 
+    /**
+     * TODO
+     */
     private void doSave() {
         System.out.println("Save");
     }
 
+    /**
+     * Creates and shows a "help" window.
+     * TODO add help information
+     */
     @FXML
     protected void showHelp() {
         try {
@@ -254,39 +315,8 @@ public class ApplicationWindow implements Initializable {
     }
 
     /**
-     * Create a new Node
-     */
-    @FXML
-    protected void createNewNode() {
-        Optional<GraphNode> result = showNodeDialog();
-
-        result.ifPresent(node -> {
-            currentGraph.addNode(node);
-            statusLabel.setText("Created New Node");
-        });
-    }
-
-    private Optional<GraphNode> showNodeDialog() {
-        try {
-            FXMLLoader loader = new FXMLLoader(ApplicationWindow.class.getResource("new-node-modal.fxml"));
-            Parent root = loader.load();
-            NewNodeModal nodeModal = loader.getController();
-
-            Stage stage = buildModal("New Node", root);
-            stage.showAndWait();
-
-            return nodeModal.getResult();
-
-        } catch (IOException e) {
-            System.out.println("Failed to create a new dialog box: " + e.getMessage());
-            e.printStackTrace();
-            return Optional.empty();
-        }
-
-    }
-
-    /**
      * Edit an existing Node
+     * TODO
      */
     @FXML
     protected void editNode() {
@@ -295,6 +325,7 @@ public class ApplicationWindow implements Initializable {
 
     /**
      * Save and close an open Graph
+     * TODO
      */
     public void closeGraph() {
         System.out.println("Close List Item");
@@ -309,23 +340,19 @@ public class ApplicationWindow implements Initializable {
         Platform.exit();
     }
 
+    /**
+     * @return  the root <code>Stage</code> object
+     */
     private Stage getStage() {
         return (Stage) header.getScene().getWindow();
     }
 
+    /**
+     * Returns the <code>Pane</code> object that is at the center of the application's main window.
+     * @return  the {@link #contentPane}
+     */
     public Pane getContentPane() {
         return contentPane;
-    }
-
-    /**
-     * @return  the text of the status label
-     */
-    public String getStatusLabel() {
-        return statusLabel.getText();
-    }
-
-    public Label getStatusLabelObject() {
-        return statusLabel;
     }
 
 }

@@ -41,7 +41,7 @@
     <!-- Where the Tree will be displayed -->
     <center>
         <!-- placeholder when no Graph is open -->
-        <VBox fx:id="emptyState" alignment="CENTER" VBox.vgrow="ALWAYS" spacing="16" styleClass="empty-state">
+        <VBox fx:id="emptyState" alignment="CENTER" VBox.vgrow="ALWAYS" spacing="8" styleClass="empty-state">
             <Label text="No Tree selected" styleClass="empty-state"/>
             <Label text="Create a new Tree or open an existing one." styleClass="empty-state"/>
         </VBox>
@@ -71,12 +71,12 @@
 
     <!-- RIGHT -->
     <right>
-        <VBox alignment="TOP_CENTER">
+        <VBox fx:id="rightControlPanel" alignment="TOP_CENTER" spacing="8" styleClass="left-control-panel">
             <padding> <!--Padding for the VBox itself-->
-                <Insets top="8" right="10" bottom="8" left="10"/>
+                <Insets top="6" right="8" bottom="6" left="8"/>
             </padding>
 
-            <Label fx:id="statusLabel" text="Ready"/>
+            <Label fx:id="statusLabel" styleClass="label"/>
         </VBox>
     </right>
 

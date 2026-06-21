@@ -2,7 +2,9 @@ package com.berthouex.familytree.model;
 
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.time.LocalDate;
@@ -20,6 +22,9 @@ public class GraphNode extends StackPane {
     private final String nodeId;
     private final List<GraphNode> parentNodes;
     private final List<GraphNode> childNodes;
+
+    private Text headerLabel;
+    private Rectangle rectangle;
 
     private String firstName;
     private String lastName;
@@ -58,9 +63,16 @@ public class GraphNode extends StackPane {
         setId("GraphNode");
         tryComputeAge();
 
-        Text text = new Text(firstName + " " + lastName);
-        Rectangle rectangle = new Rectangle(48, 64, Color.RED);
-        this.getChildren().addAll(text, rectangle);
+        headerLabel = new Text(firstName + " " + lastName);
+        headerLabel.setFont(new Font("Courier", 16));
+        headerLabel.setFill(Color.BLACK);
+
+        double width = headerLabel.getLayoutBounds().getWidth();
+        width += 8;
+        System.out.println(width);
+        rectangle = new Rectangle(width, 128, Color.CYAN);
+
+        this.getChildren().addAll(rectangle, headerLabel);
 
         this.setLayoutX(x);
         this.setLayoutY(y);
@@ -77,6 +89,20 @@ public class GraphNode extends StackPane {
         });
     }
 
+    public void setColor(Paint color) {
+        this.rectangle.setFill(color);
+    }
+
+    public void setHeader(String text) {
+        headerLabel = new Text(text);
+        double width = headerLabel.getLayoutBounds().getWidth();
+        this.rectangle.setWidth(width);
+    }
+
+
+    /**
+     * A builder of <code>GraphNodes</code>. The builder configures the first and last names, birth and death dates, and biography.
+     */
     public static class Builder {
         private String firstName;
         private String lastName;
@@ -160,11 +186,9 @@ public class GraphNode extends StackPane {
 
     /**
      * @param firstName a first name
-     * @return  a reference to this object
      */
-    public GraphNode setFirstName(String firstName) {
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
-        return this;
     }
 
     /**
@@ -176,11 +200,9 @@ public class GraphNode extends StackPane {
 
     /**
      * @param lastName  a last name or family name
-     * @return  a reference to this object
      */
-    public GraphNode setLastName(String lastName) {
+    public void setLastName(String lastName) {
         this.lastName = lastName;
-        return this;
     }
 
     /**
@@ -194,16 +216,14 @@ public class GraphNode extends StackPane {
         if (birthDate != null && deathDate != null) {
             return Period.between(birthDate, deathDate).getMonths();
         }
-        return 0;
+        return -1;
     }
 
     /**
      * @param ageInYears    the age in years
-     * @return  a reference to this object
      */
-    public GraphNode setAge(int ageInYears) {
+    public void setAge(int ageInYears) {
         this.age = ageInYears;
-        return this;
     }
 
     public LocalDate getDeathDate() {
@@ -215,12 +235,14 @@ public class GraphNode extends StackPane {
      * only the death date is set.
      *
      * @param deathDate the date of death
-     * @return  a reference to this object
      */
-    public GraphNode setDeathDate(LocalDate deathDate) {
+    public void setDeathDate(LocalDate deathDate) {
         this.deathDate = deathDate;
         tryComputeAge();
-        return this;
+    }
+
+    public boolean isDeceased() {
+        return this.deathDate != null;
     }
 
     public LocalDate getBirthDate() {
@@ -229,11 +251,9 @@ public class GraphNode extends StackPane {
 
     /**
      * @param birthDate the date of birth
-     * @return  a reference to this object
      */
-    public GraphNode setBirthDate(LocalDate birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
-        return this;
     }
 
     public String getDescription() {
@@ -242,25 +262,21 @@ public class GraphNode extends StackPane {
 
     /**
      * @param description   a description to attach to this Node
-     * @return  a reference to this object
      */
-    public GraphNode setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
-        return this;
     }
 
     public String getNodeId() {
         return nodeId;
     }
 
-    public GraphNode setXPos(float x) {
+    public void setXPos(float x) {
         this.x = x;
-        return this;
     }
 
-    public GraphNode setYPos(float y) {
+    public void setYPos(float y) {
         this.y = y;
-        return this;
     }
 
     /**
@@ -281,18 +297,18 @@ public class GraphNode extends StackPane {
 
     @Override
     public String toString() {
-        return "GraphNode{" +
+        return "GraphNode {" +
             "nodeId='" + nodeId + '\'' +
-            ", parentNodes=" + parentNodes +
-            ", childNodes=" + childNodes +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
-            ", description='" + description + '\'' +
+            ", biography='" + description + '\'' +
             ", birthDate=" + birthDate +
             ", deathDate=" + deathDate +
             ", age=" + age +
             ", x=" + x +
             ", y=" + y +
+            ", parentNodes=" + parentNodes +
+            ", childNodes=" + childNodes +
             '}';
     }
 
