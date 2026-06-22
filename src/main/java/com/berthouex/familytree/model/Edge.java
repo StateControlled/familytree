@@ -3,13 +3,17 @@ package com.berthouex.familytree.model;
 import javafx.scene.Group;
 import javafx.scene.shape.Line;
 
+/**
+ * A connecting line from one {@link GraphNode} to another.
+ */
 public class Edge extends Group {
 
     public Edge(GraphNode source, GraphNode target) {
         Line line = new Line();
         this.getChildren().add(line);
 
-        // Bind edge line coordinates to center properties of the vertex StackPanes
+        // Bind edge line coordinates to center properties of the vertex StackPanes GraphNodes
+
         line.startXProperty().bind(
             source.layoutXProperty().add(source.widthProperty().divide(2))
         );

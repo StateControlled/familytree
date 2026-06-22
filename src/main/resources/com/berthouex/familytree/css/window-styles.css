@@ -1,22 +1,31 @@
+:root {
+    --headerBarColor: #274979;
+    --sidePanelColor: #3C5079;
+    --smallBoxColor: #6B7CAD;
+    --grayAccentOne: #8690A9;
+    --whiteAccentOne: #E2E3EB;
+    --basicWhite: #FFFFFF;
+}
+
+
 .header-bar {
-    -fx-background-color: #274979;
+    -fx-background-color: var(--headerBarColor);
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0, 0, 2);
 }
 
 .app-title {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-text-fill: #FFFFFF;
-
+    -fx-text-fill: var(--basicWhite);
 }
 
 .left-control-panel {
-    -fx-background-color: #3C5079;
+    -fx-background-color: var(--sidePanelColor);
 }
 
 .footer {
     -fx-font-size: 12px;
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: var(--basicWhite);
 }
 
 .button {
@@ -25,7 +34,7 @@
 
 .label {
     -fx-font-size: 18px;
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: var(--basicWhite);
 }
 
 .dialog-label {

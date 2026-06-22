@@ -42,7 +42,7 @@
             <DatePicker fx:id="deathDatePicker" GridPane.rowIndex="2" GridPane.columnIndex="1" visible="false"/>
 
             <Label text="Biography:" styleClass="dialog-label" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="3"/>
-            <TextArea fx:id="descriptionText" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="3" wrapText="true"/>
+            <TextArea fx:id="biographyText" GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="3" wrapText="true"/>
         </GridPane>
 
         <Separator/>

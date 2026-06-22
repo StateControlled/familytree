@@ -42,7 +42,7 @@ public class NewNodeModal implements Initializable {
     @FXML
     private DatePicker deathDatePicker;
     @FXML
-    private TextArea descriptionText;
+    private TextArea biographyText;
 
     private GraphNode result;
 
@@ -59,7 +59,7 @@ public class NewNodeModal implements Initializable {
         String lastName = this.lastNameText.getText().trim();
         LocalDate bDate = this.birthDatePicker.getValue();
         LocalDate dDate = this.deathDatePicker.getValue();
-        String description = this.descriptionText.getText().trim();
+        String description = this.biographyText.getText().trim();
 
         GraphNode.Builder builder = new GraphNode.Builder();
 

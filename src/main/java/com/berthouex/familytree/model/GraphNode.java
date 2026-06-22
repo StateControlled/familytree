@@ -19,6 +19,10 @@ import java.util.UUID;
  * @see Graph
  */
 public class GraphNode extends StackPane {
+    private static final Paint DEFAULT_COLOR = new Color(0.42, 0.49, 0.68, 0.85);
+    private static final float DEFAULT_WIDTH = 96.0f;
+    private static final float DEFAULT_HEIGHT = 128.f;
+
     private final String nodeId;
     private final List<GraphNode> parentNodes;
     private final List<GraphNode> childNodes;
@@ -28,7 +32,7 @@ public class GraphNode extends StackPane {
 
     private String firstName;
     private String lastName;
-    private String description;
+    private String biography;
     private LocalDate birthDate;
     private LocalDate deathDate;
     private int age;
@@ -37,13 +41,13 @@ public class GraphNode extends StackPane {
     private double y;
 
     private GraphNode(Builder builder) {
-        this(builder.firstName, builder.lastName, builder.description, builder.birthDate, builder.deathDate);
+        this(builder.firstName, builder.lastName, builder.biography, builder.birthDate, builder.deathDate);
     }
 
-    private GraphNode(String firstName, String lastName, String description, LocalDate birthDate, LocalDate deathDate) {
+    private GraphNode(String firstName, String lastName, String biography, LocalDate birthDate, LocalDate deathDate) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.description = description;
+        this.biography = biography;
         this.birthDate = birthDate;
         this.deathDate = deathDate;
 
@@ -67,10 +71,8 @@ public class GraphNode extends StackPane {
         headerLabel.setFont(new Font("Courier", 16));
         headerLabel.setFill(Color.BLACK);
 
-        double width = headerLabel.getLayoutBounds().getWidth();
-        width += 8;
-        System.out.println(width);
-        rectangle = new Rectangle(width, 128, Color.CYAN);
+        rectangle = new Rectangle(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_COLOR);
+        setBoxHeight();
 
         this.getChildren().addAll(rectangle, headerLabel);
 
@@ -89,13 +91,41 @@ public class GraphNode extends StackPane {
         });
     }
 
-    public void setColor(Paint color) {
-        this.rectangle.setFill(color);
+    /**
+     * Sets the height of the Node border box to an appropriate height
+     */
+    private void setBoxHeight() {
+        // height of header + birthdate + deathdate + bio + age
     }
 
-    public void setHeader(String text) {
+    /**
+     * Sets the background color of this <code>GraphNode</code>. If the argument is null, sets the color to the
+     * default color option.
+     *
+     * @param color the new background color
+     */
+    public void setColor(Paint color) {
+        if (color == null) {
+            this.rectangle.setFill(DEFAULT_COLOR);
+        } else {
+            this.rectangle.setFill(color);
+        }
+    }
+
+    /**
+     *
+     * @param text  a <code>String</code> that will be set as the header text.
+     *
+     * @throws IllegalArgumentException if argument <code>text</code> is null
+     */
+    public void setHeader(String text) throws IllegalArgumentException {
+        if (text == null || text.isEmpty()) {
+            throw new IllegalArgumentException("Text cannot be null");
+        }
         headerLabel = new Text(text);
+
         double width = headerLabel.getLayoutBounds().getWidth();
+        width += 8;
         this.rectangle.setWidth(width);
     }
 
@@ -106,7 +136,7 @@ public class GraphNode extends StackPane {
     public static class Builder {
         private String firstName;
         private String lastName;
-        private String description;
+        private String biography;
         private LocalDate birthDate;
         private LocalDate deathDate;
 
@@ -125,7 +155,7 @@ public class GraphNode extends StackPane {
         }
 
         public Builder description(String description) {
-            this.description = description;
+            this.biography = description;
             return this;
         }
 
@@ -161,6 +191,11 @@ public class GraphNode extends StackPane {
         return childNodes.add(child);
     }
 
+    /**
+     * Attempts to compute the age of this family member.
+     * If both a birthdate and death date are provided, set <code>age</code> to the period between.
+     * If a birthdate is given but a death date is not, compute age as the period between the birthdate and today.
+     */
     private void tryComputeAge() {
         if (birthDate != null && deathDate == null) {
             LocalDate temp = LocalDate.now();
@@ -170,7 +205,6 @@ public class GraphNode extends StackPane {
         if (birthDate != null && deathDate != null) {
             this.age = Period.between(birthDate, deathDate).getYears();
         }
-
     }
 
     ////////////////////////////////////////////////////////////////
@@ -256,41 +290,48 @@ public class GraphNode extends StackPane {
         this.birthDate = birthDate;
     }
 
-    public String getDescription() {
-        return description;
+    public String getBiography() {
+        return biography;
     }
 
     /**
-     * @param description   a description to attach to this Node
+     * @param biography   a biography to attach to this Node
      */
-    public void setDescription(String description) {
-        this.description = description;
+    public void setBiography(String biography) {
+        this.biography = biography;
     }
 
     public String getNodeId() {
         return nodeId;
     }
 
+    public void setPosition(float x, float y) {
+        setXPos(x);
+        setYPos(y);
+    }
+
     public void setXPos(float x) {
         this.x = x;
+        this.setLayoutX(x);
     }
 
     public void setYPos(float y) {
         this.y = y;
+        this.setLayoutY(y);
     }
 
     /**
      * Returns a new object with the same data from the original object.
      *
      * @param original  the <code>GraphNode</code> to copy
-     * @return  a new <code>GraphNode</code> object
+     * @return          a new <code>GraphNode</code> object
      */
     public static GraphNode copyOf(GraphNode original) {
         String firstName = original.firstName;
         String lastName = original.lastName;
         LocalDate bDate = original.birthDate;
         LocalDate dDate = original.deathDate;
-        String description = original.description;
+        String description = original.biography;
 
         return new GraphNode(firstName, lastName, description, bDate, dDate);
     }
@@ -301,7 +342,7 @@ public class GraphNode extends StackPane {
             "nodeId='" + nodeId + '\'' +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
-            ", biography='" + description + '\'' +
+            ", biography='" + biography + '\'' +
             ", birthDate=" + birthDate +
             ", deathDate=" + deathDate +
             ", age=" + age +
@@ -310,10 +351,6 @@ public class GraphNode extends StackPane {
             ", parentNodes=" + parentNodes +
             ", childNodes=" + childNodes +
             '}';
-    }
-
-    public String getName() {
-        return String.format("%s %s", firstName, lastName);
     }
 
 }
