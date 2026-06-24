@@ -19,8 +19,20 @@
     -fx-text-fill: var(--basicWhite);
 }
 
+.empty-state {
+
+}
+
 .left-control-panel {
     -fx-background-color: var(--sidePanelColor);
+}
+
+.right-control-panel {
+    -fx-background-color: var(--sidePanelColor);
+}
+
+.node-display {
+    border: 1px solid black;
 }
 
 .footer {

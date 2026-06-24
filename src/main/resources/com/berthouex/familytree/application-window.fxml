@@ -11,6 +11,9 @@
 <?import javafx.scene.control.Separator?>
 
 <!-- This is the primary screen the user will interact with -->
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.TextArea?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.berthouex.familytree.controller.ApplicationWindow"
             stylesheets="@css/window-styles.css">
@@ -46,9 +49,8 @@
             <Label text="Create a new Tree or open an existing one." styleClass="empty-state"/>
         </VBox>
 
-        <Pane fx:id="contentPane">
+        <Pane fx:id="contentPane"/>
 
-        </Pane>
     </center>
 
     <!-- LEFT -->
@@ -61,7 +63,6 @@
             <Label fx:id="leftLabel" text="Edit" styleClass="label"/>
 
             <Button fx:id="createNewNode" text="New Node" onAction="#createNewNode" styleClass="button"/>
-            <Button fx:id="editNode" text="Edit Node" onAction="#editNode" styleClass="button"/>
             <Button fx:id="closeTree" text="Close Tree" onAction="#closeGraph" styleClass="button"/>
             <Separator/>
             <Label fx:id="listSelectorLabel" text="Open Trees:" styleClass="label"/>
@@ -70,12 +71,35 @@
     </left>
 
     <!-- RIGHT -->
+    <!-- Controls to edit an individual node from the Tree -->
     <right>
-        <VBox fx:id="rightControlPanel" alignment="TOP_CENTER" spacing="8" styleClass="left-control-panel">
+        <VBox fx:id="rightControlPanel" alignment="TOP_CENTER" spacing="8" styleClass="right-control-panel">
             <padding> <!--Padding for the VBox itself-->
                 <Insets top="6" right="8" bottom="6" left="8"/>
             </padding>
 
+            <VBox styleClass="node-display">
+                <padding> <!--Padding for the VBox itself-->
+                    <Insets top="4" right="4" bottom="4" left="4"/>
+                </padding>
+
+                <HBox>
+                    <TextField fx:id="nodeFirstName" />
+                    <TextField fx:id="nodeLastName" />
+                </HBox>
+
+                <HBox>
+                    <DatePicker fx:id="nodeBirthDate" />
+                    <DatePicker fx:id="nodeDeathDate" />
+                </HBox>
+
+                <TextArea fx:id="nodeBiography" />
+
+            </VBox>
+
+            <Separator/>
+
+            <Button fx:id="editNode" text="Edit Node" onAction="#editNode" styleClass="button"/>
             <Label fx:id="statusLabel" styleClass="label"/>
         </VBox>
     </right>

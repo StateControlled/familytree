@@ -9,8 +9,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -35,6 +38,16 @@ public class ApplicationWindow implements Initializable {
     // Right pane
     @FXML
     private VBox rightControlPanel;
+    @FXML
+    private TextField nodeFirstName;
+    @FXML
+    private TextField nodeLastName;
+    @FXML
+    private DatePicker nodeBirthDate;
+    @FXML
+    private DatePicker nodeDeathDate;
+    @FXML
+    private TextArea nodeBiography;
     @FXML
     private Label statusLabel;
 
@@ -74,9 +87,11 @@ public class ApplicationWindow implements Initializable {
     @FXML
     private Button exitButton;
 
+    // Other
     private ObservableList<Graph> openGraphs;
 
     private Graph currentGraph;
+    private GraphNode currentNode;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
