@@ -1,6 +1,8 @@
 package com.berthouex.familytree.controller;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
@@ -61,6 +64,8 @@ public class ApplicationWindow implements Initializable {
     @FXML
     private VBox leftControlPanel;
     @FXML
+    private VBox nodeInfoPanel;
+    @FXML
     private Label leftLabel;
     @FXML
     private Button createNewNode;
@@ -95,19 +100,43 @@ public class ApplicationWindow implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        rightControlPanel.setPrefWidth(100);
-        rightControlPanel.setMinWidth(80);
-        rightControlPanel.setMaxWidth(120);
+        rightControlPanel.setPrefWidth(160);
+        rightControlPanel.setMinWidth(100);
+        rightControlPanel.setMaxWidth(800);
         statusLabel.setWrapText(true);
         statusLabel.prefWidthProperty().bind(rightControlPanel.widthProperty());
         statusLabel.setText("Ready");
 
         this.openGraphs = FXCollections.observableArrayList();
+
+        this.listSelector.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         this.listSelector.setItems(openGraphs);
         this.listSelector.setCellFactory(view -> new GraphCell());
+
         this.listSelector.getSelectionModel()
             .selectedItemProperty()
             .addListener((observable, oldGraph, newGraph) -> selectGraph(newGraph));
+
+//        this.listSelector.setOnMouseClicked(event -> {
+//            if (listSelector.getSelectionModel().getSelectedItem() != null) {
+//                listSelector.getSelectionModel().clearSelection();
+//            }
+//        });
+
+        ChangeListener<GraphNode> cn = new ChangeListener<GraphNode>() {
+            @Override
+            public void changed(ObservableValue<? extends GraphNode> observable, GraphNode oldValue, GraphNode newValue) {
+                selectNode(newValue);
+            }
+        };
+
+    }
+
+    private void selectNode(GraphNode node) {
+        boolean hasNode = (node != null);
+        nodeInfoPanel.setVisible(hasNode);
+        nodeInfoPanel.setManaged(hasNode);
+        nodeInfoPanel.setDisable(!hasNode);
     }
 
     private void selectGraph(Graph graph) {
@@ -115,6 +144,7 @@ public class ApplicationWindow implements Initializable {
         emptyState.setVisible(!hasGraph);
         emptyState.setManaged(!hasGraph);
 
+        contentPane.setVisible(hasGraph);
         contentPane.setManaged(hasGraph);
 
         if (graph != null) {
@@ -344,6 +374,7 @@ public class ApplicationWindow implements Initializable {
      */
     public void closeGraph() {
         System.out.println("Close List Item");
+        listSelector.getSelectionModel().clearSelection();
     }
 
     /**

@@ -89,6 +89,13 @@ public class GraphNode extends StackPane {
             this.setLayoutX(this.getLayoutX() + e.getX() - x);
             this.setLayoutY(this.getLayoutY() + e.getY() - y);
         });
+
+        this.setOnMouseClicked(e -> {
+            System.out.println(firstName + " " + lastName);
+            System.out.println(birthDate);
+            System.out.println(deathDate);
+            System.out.println(biography);
+        });
     }
 
     /**

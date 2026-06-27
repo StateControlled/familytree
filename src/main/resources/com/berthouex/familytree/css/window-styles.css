@@ -1,22 +1,21 @@
-:root {
-    --headerBarColor: #274979;
-    --sidePanelColor: #3C5079;
-    --smallBoxColor: #6B7CAD;
-    --grayAccentOne: #8690A9;
-    --whiteAccentOne: #E2E3EB;
-    --basicWhite: #FFFFFF;
+.root {
+    -header-bar-color: #274979;
+    -side-panel-color: #3C5079;
+    -small-box-color: #6B7CAD;
+    -gray-accent: #8690A9;
+    -white-accent: #E2E3EB;
+    -basic-white: #FFFFFF;
 }
 
-
 .header-bar {
-    -fx-background-color: var(--headerBarColor);
+    -fx-background-color: -header-bar-color;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0, 0, 2);
 }
 
 .app-title {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-text-fill: var(--basicWhite);
+    -fx-text-fill: -basic-white;
 }
 
 .empty-state {
@@ -24,20 +23,22 @@
 }
 
 .left-control-panel {
-    -fx-background-color: var(--sidePanelColor);
+    -fx-background-color: -side-panel-color;
 }
 
 .right-control-panel {
-    -fx-background-color: var(--sidePanelColor);
+    -fx-background-color: -side-panel-color;
 }
 
 .node-display {
-    border: 1px solid black;
+    -fx-border-color: -small-box-color;
+    -fx-border-width: 2px;
+    -fx-border-style: solid;
 }
 
 .footer {
     -fx-font-size: 12px;
-    -fx-text-fill: var(--basicWhite);
+    -fx-text-fill: -basic-white;
 }
 
 .button {
@@ -46,7 +47,7 @@
 
 .label {
     -fx-font-size: 18px;
-    -fx-text-fill: var(--basicWhite);
+    -fx-text-fill: -basic-white;
 }
 
 .dialog-label {

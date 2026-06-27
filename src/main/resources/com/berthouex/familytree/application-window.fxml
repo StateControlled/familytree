@@ -49,7 +49,7 @@
             <Label text="Create a new Tree or open an existing one." styleClass="empty-state"/>
         </VBox>
 
-        <Pane fx:id="contentPane"/>
+        <Pane fx:id="contentPane"/> <!-- This is where the tree is displayed -->
 
     </center>
 
@@ -78,7 +78,7 @@
                 <Insets top="6" right="8" bottom="6" left="8"/>
             </padding>
 
-            <VBox styleClass="node-display">
+            <VBox fx:id="nodeInfoPanel" styleClass="node-display" spacing="8" disable="true">
                 <padding> <!--Padding for the VBox itself-->
                     <Insets top="4" right="4" bottom="4" left="4"/>
                 </padding>
@@ -97,9 +97,11 @@
 
             </VBox>
 
+            <!-- <Button fx:id="editNode" text="Edit Node" onAction="#editNode" styleClass="button"/> -->
+
             <Separator/>
 
-            <Button fx:id="editNode" text="Edit Node" onAction="#editNode" styleClass="button"/>
+            <Label text="STATUS"/>
             <Label fx:id="statusLabel" styleClass="label"/>
         </VBox>
     </right>
