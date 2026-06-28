@@ -73,26 +73,41 @@
     <!-- RIGHT -->
     <!-- Controls to edit an individual node from the Tree -->
     <right>
-        <VBox fx:id="rightControlPanel" alignment="TOP_CENTER" spacing="8" styleClass="right-control-panel">
+        <VBox fx:id="rightControlPanel" alignment="TOP_CENTER" spacing="8" styleClass="right-control-panel" >
             <padding> <!--Padding for the VBox itself-->
                 <Insets top="6" right="8" bottom="6" left="8"/>
             </padding>
 
-            <VBox fx:id="nodeInfoPanel" styleClass="node-display" spacing="8" disable="true">
+            <VBox fx:id="nodeInfoPanel" styleClass="node-display" spacing="8" disable="true" visible="false" managed="false">
                 <padding> <!--Padding for the VBox itself-->
                     <Insets top="4" right="4" bottom="4" left="4"/>
                 </padding>
 
-                <HBox>
-                    <TextField fx:id="nodeFirstName" />
-                    <TextField fx:id="nodeLastName" />
-                </HBox>
+                <VBox>
+                    <HBox>
+                        <Label text="First Name"/>
+                        <Label text="Last Name" />
+                    </HBox>
+                    <HBox>
+                        <TextField fx:id="nodeFirstName" />
+                        <TextField fx:id="nodeLastName" />
+                    </HBox>
+                </VBox>
 
-                <HBox>
-                    <DatePicker fx:id="nodeBirthDate" />
-                    <DatePicker fx:id="nodeDeathDate" />
-                </HBox>
 
+                <VBox>
+                    <HBox>
+                        <Label text="Birth"/>
+                        <Label text="Death" />
+                    </HBox>
+
+                    <HBox>
+                        <DatePicker fx:id="nodeBirthDate" />
+                        <DatePicker fx:id="nodeDeathDate" />
+                    </HBox>
+                </VBox>
+
+                <Label text="Biography" />
                 <TextArea fx:id="nodeBiography" />
 
                 <Separator/>

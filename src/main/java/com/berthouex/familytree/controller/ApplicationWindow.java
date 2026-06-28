@@ -100,7 +100,8 @@ public class ApplicationWindow implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         rightControlPanel.setPrefWidth(160);
         rightControlPanel.setMinWidth(100);
-        rightControlPanel.setMaxWidth(800);
+//        rightControlPanel.setMaxWidth(800);
+
         statusLabel.setWrapText(true);
         statusLabel.prefWidthProperty().bind(rightControlPanel.widthProperty());
         statusLabel.setText("Ready");
