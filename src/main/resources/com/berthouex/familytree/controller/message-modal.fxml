@@ -11,27 +11,29 @@
 <!-- A generic modal to display a message to the user -->
 <VBox xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.berthouex.familytree.controller.MessageModal"
-      spacing="8">
+      stylesheets="@../css/window-styles.css">
 
-    <padding>
-        <Insets top="24" right="24" bottom="24" left="24"/>
-    </padding>
-
-    <Label fx:id="messageTitle" text="Message" styleClass="dialog-label"/>
-    <Separator/>
-
-    <TextArea fx:id="messagePrimary" disable="true"/>
-    <TextArea fx:id="messageSecondary" disable="true" visible="false" managed="false"/>
-
-    <Separator/>
-
-    <HBox alignment="CENTER_LEFT" spacing="8">
+    <VBox spacing="8">
         <padding>
-            <Insets top="12" right="12" bottom="12" left="12"/>
+            <Insets top="24" right="24" bottom="24" left="24"/>
         </padding>
 
-        <Button fx:id="okButton" text="Create" styleClass="button" onAction="#clickOk" defaultButton="true"/>
-        <Button fx:id="cancelButton" text="Cancel" styleClass="button" onAction="#clickCancel" visible="false"/>
-    </HBox>
+        <Label fx:id="messageTitle" text="Message" styleClass="dialog-label"/>
+        <Separator/>
+
+        <TextArea fx:id="messagePrimary" disable="true"/>
+        <TextArea fx:id="messageSecondary" disable="true" visible="false" managed="false"/>
+
+        <Separator/>
+
+        <HBox alignment="CENTER_LEFT" spacing="8">
+            <padding>
+                <Insets top="12" right="12" bottom="12" left="12"/>
+            </padding>
+
+            <Button fx:id="okButton" text="Create" styleClass="button" onAction="#clickOk" defaultButton="true"/>
+            <Button fx:id="cancelButton" text="Cancel" styleClass="button" onAction="#clickCancel" visible="false"/>
+        </HBox>
+    </VBox>
 
 </VBox>

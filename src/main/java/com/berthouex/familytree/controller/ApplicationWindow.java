@@ -1,8 +1,6 @@
 package com.berthouex.familytree.controller;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -70,13 +68,13 @@ public class ApplicationWindow implements Initializable {
     @FXML
     private Button createNewNode;
     @FXML
-    private Button editNode;
+    private Button saveNodeEditsButton;
     @FXML
     private Button closeTree;
     @FXML
     private  Label listSelectorLabel;
     @FXML
-    private ListView<Graph> listSelector;
+    private ListView<Graph> graphListView;
 
     // Top row controls
     @FXML
@@ -109,75 +107,13 @@ public class ApplicationWindow implements Initializable {
 
         this.openGraphs = FXCollections.observableArrayList();
 
-        this.listSelector.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        this.listSelector.setItems(openGraphs);
-        this.listSelector.setCellFactory(view -> new GraphCell());
+        this.graphListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        this.graphListView.setItems(openGraphs);
+        this.graphListView.setCellFactory(view -> new GraphCell());
 
-        this.listSelector.getSelectionModel()
+        this.graphListView.getSelectionModel()
             .selectedItemProperty()
             .addListener((observable, oldGraph, newGraph) -> selectGraph(newGraph));
-
-//        this.listSelector.setOnMouseClicked(event -> {
-//            if (listSelector.getSelectionModel().getSelectedItem() != null) {
-//                listSelector.getSelectionModel().clearSelection();
-//            }
-//        });
-
-        ChangeListener<GraphNode> cn = new ChangeListener<GraphNode>() {
-            @Override
-            public void changed(ObservableValue<? extends GraphNode> observable, GraphNode oldValue, GraphNode newValue) {
-                selectNode(newValue);
-            }
-        };
-
-    }
-
-    private void selectNode(GraphNode node) {
-        boolean hasNode = (node != null);
-        nodeInfoPanel.setVisible(hasNode);
-        nodeInfoPanel.setManaged(hasNode);
-        nodeInfoPanel.setDisable(!hasNode);
-    }
-
-    private void selectGraph(Graph graph) {
-        boolean hasGraph = (graph != null);
-        emptyState.setVisible(!hasGraph);
-        emptyState.setManaged(!hasGraph);
-
-        contentPane.setVisible(hasGraph);
-        contentPane.setManaged(hasGraph);
-
-        if (graph != null) {
-            statusLabel.setText("Selected Graph " + graph.getGraphName());
-
-            if (graph.hasNodes()) {
-                clearAndUpdateContentPane();
-            }
-            currentGraph = graph;
-            listSelector.getSelectionModel().select(graph);
-        }
-
-        saveButton.setDisable(!hasGraph);
-        leftControlPanel.setDisable(!hasGraph);
-    }
-
-    /**
-     * Clears the ContentPane and adds all the <code>GraphNodes</code> from the current Graph.
-     * Does not check to see that {@link #currentGraph} is not <code>null</code> or that the {@link #currentGraph} has Nodes.
-     */
-    public void clearAndUpdateContentPane() {
-        contentPane.getChildren().clear();
-        updateContentPane();
-    }
-
-    /**
-     * Adds any <code>GraphNodes</code> that are not present on the ContentPane to the Pane.
-     * Does not check to see that {@link #currentGraph} is not <code>null</code> or that the {@link #currentGraph} has Nodes.
-     */
-    public void updateContentPane() {
-        currentGraph.getNodes().stream()
-            .filter(node -> !contentPane.getChildren().contains(node))
-            .forEach(node -> contentPane.getChildren().add(node));
     }
 
     /**
@@ -191,17 +127,20 @@ public class ApplicationWindow implements Initializable {
 
         result.ifPresent(graph -> {
             openGraphs.add(graph);
-            listSelector.getSelectionModel().select(graph);
+            graphListView.getSelectionModel().select(graph);
             statusLabel.setText("Created New Graph");
         });
     }
 
+    /**
+     * TODO add edit graph functionality
+     * @return
+     */
     private Optional<Graph> showGraphDialog() {
         try {
             FXMLLoader loader = new FXMLLoader(ApplicationWindow.class.getResource("graph-modal.fxml"));
             Parent root = loader.load();
             GraphModal graphModal = loader.getController();
-//            graphModal.init(graph);
 
             Stage stage = buildModal("Tree", root);
             stage.showAndWait();
@@ -212,11 +151,10 @@ public class ApplicationWindow implements Initializable {
             e.printStackTrace();
             return Optional.empty();
         }
-
     }
 
     /**
-     * Create a new Node
+     * Opens the New Node modal and allows a user to create a new Node, which is then added to the currently open/selected <code>Graph</code>.
      */
     @FXML
     protected void createNewNode() {
@@ -225,12 +163,23 @@ public class ApplicationWindow implements Initializable {
 
             result.ifPresent(node -> {
                 currentGraph.addNode(node);
+                node.setNodeOnMouseClicked(this::selectNode);
                 statusLabel.setText("Created New Node");
             });
-            updateContentPane();
+
+            currentGraph.getNodes().stream()
+                .filter(node -> !contentPane.getChildren().contains(node))
+                .forEach(node -> contentPane.getChildren().add(node));
+        } else {
+            statusLabel.setText("No Tree Open");
         }
     }
 
+    /**
+     * Shows a modal to allow the creation of a new <code>GraphNode</code>.
+     *
+     * @return an <code>Optional</code> containing a <code>GraphNode</code>
+     */
     private Optional<GraphNode> showNodeDialog() {
         try {
             FXMLLoader loader = new FXMLLoader(ApplicationWindow.class.getResource("new-node-modal.fxml"));
@@ -250,10 +199,190 @@ public class ApplicationWindow implements Initializable {
     }
 
     /**
-     * Clear list selection
+     * Creates and shows a "help" window.
+     * TODO add help information
      */
-    private void clearSelection() {
-        listSelector.getSelectionModel().select(null);
+    @FXML
+    protected void showHelp() {
+        try {
+            FXMLLoader loader = new FXMLLoader(ApplicationWindow.class.getResource("help-modal.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = buildModal("Help", root);
+            stage.showAndWait();
+        } catch (IOException e) {
+            System.out.println("Failed to create a new dialog box: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Save and close an open Graph
+     * TODO
+     */
+    public void closeGraph() {
+        System.out.println("Close selected list item");
+
+        Graph selected = graphListView.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            graphListView.getItems().remove(selected);
+        }
+
+        graphListView.getSelectionModel().select(null); // TODO investigate effects
+
+        graphListView.getSelectionModel().clearSelection();
+        contentPane.getChildren().clear();
+        currentGraph.getNodes().stream()
+            .filter(node -> !contentPane.getChildren().contains(node))
+            .forEach(node -> contentPane.getChildren().add(node));
+    }
+
+    /**
+     * Shows the system's <code>File Explorer</code> or equivalent and loads an existing save, if present.
+     * TODO implement functionality
+     */
+    @FXML
+    protected void open() {
+        FileChooser fileChooser = buildFileChooser("Select Saved Tree");
+        File file = fileChooser.showOpenDialog(this.getStage());
+
+        if (file != null) {
+            doOpen(file);
+        }
+    }
+
+    /**
+     * @param file  a saved <code>Graph</code>
+     */
+    private void doOpen(File file) {
+        for (Graph graph : openGraphs) {
+            if (file.getAbsolutePath().equals(graph.getFilepath())) {
+                graphListView.getSelectionModel().select(graph);
+                return;
+            }
+        }
+
+        try {
+            Graph graph = DatabaseManager.load(file.getAbsolutePath());
+            openGraphs.add(graph);
+            graphListView.getSelectionModel().select(graph);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Edit an existing Node
+     * TODO
+     */
+    @FXML
+    protected void updateNode() {
+        System.out.println("Edit Node - Saved");
+    }
+
+    /**
+     * Save the current Tree
+     * TODO
+     */
+    @FXML
+    protected void save() {
+//        FileChooser fileChooser = buildFileChooser("Save Current Tree");
+        doSave();
+    }
+
+    /**
+     * TODO
+     */
+    private void doSave() {
+        System.out.println("Save");
+    }
+
+    /**
+     * Saves and Exits the application.
+     */
+    @FXML
+    protected void exitApplication() {
+        doSave();
+        Platform.exit();
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+
+    /**
+     * Populates the {@link #rightControlPanel} with information from the selected <code>Node</code>.
+     *
+     * @param node  the <code>GraphNode</code> to select
+     */
+    private void selectNode(GraphNode.NodeData node) {
+        boolean hasNode = (node != null);
+        nodeInfoPanel.setVisible(hasNode);
+        nodeInfoPanel.setManaged(hasNode);
+        nodeInfoPanel.setDisable(!hasNode);
+
+        if (node != null) {
+            statusLabel.setText("Selected Node " + node.getFullName());
+
+            nodeFirstName.setText(node.firstName());
+            nodeLastName.setText(node.lastName());
+
+            if (node.hasBirthdate()) {
+                nodeBirthDate.setValue(node.birthDate());
+            }
+            if (node.hasDeathDate()) {
+                nodeDeathDate.setValue(node.deathDate());
+            }
+            if (node.hasBiography()) {
+                nodeBiography.setText(node.biography());
+            }
+        }
+    }
+
+    /**
+     * Populates the {@link #contentPane} with data from the selected <code>Graph</code>.
+     * @param graph the <code>Graph</code> to select
+     */
+    private void selectGraph(Graph graph) {
+        boolean hasGraph = (graph != null) && (!graphListView.getItems().isEmpty());
+        emptyState.setVisible(!hasGraph);
+        emptyState.setManaged(!hasGraph);
+
+        contentPane.setVisible(hasGraph);
+        contentPane.setManaged(hasGraph);
+
+        if (graph != null) {
+            statusLabel.setText("Selected Graph " + graph.getGraphName());
+
+            if (graph.hasNodes()) {
+                contentPane.getChildren().clear();
+                currentGraph.getNodes().stream()
+                    .filter(node -> !contentPane.getChildren().contains(node))
+                    .forEach(node -> contentPane.getChildren().add(node));
+            }
+
+            currentGraph = graph;
+            graphListView.getSelectionModel().select(graph);
+        }
+
+        saveButton.setDisable(!hasGraph);
+        leftControlPanel.setDisable(!hasGraph);
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+
+    /**
+     * @return  the root <code>Stage</code> object
+     */
+    private Stage getStage() {
+        return (Stage) header.getScene().getWindow();
     }
 
     /**
@@ -278,38 +407,6 @@ public class ApplicationWindow implements Initializable {
     }
 
     /**
-     * Open an existing save file
-     * TODO implement functionality
-     */
-    @FXML
-    protected void open() {
-        FileChooser fileChooser = buildFileChooser("Select Saved Tree");
-        File file = fileChooser.showOpenDialog(this.getStage());
-
-        if (file != null) {
-            doOpen(file);
-        }
-    }
-
-    private void doOpen(File file) {
-        for (Graph graph : openGraphs) {
-            if (file.getAbsolutePath().equals(graph.getFilepath())) {
-                listSelector.getSelectionModel().select(graph);
-                return;
-            }
-        }
-
-        try {
-            Graph graph = DatabaseManager.load(file.getAbsolutePath());
-            openGraphs.add(graph);
-            listSelector.getSelectionModel().select(graph);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
      * Creates a <code>FileChooser</code> object for browsing local files.
      *
      * @param title the window title
@@ -322,83 +419,6 @@ public class ApplicationWindow implements Initializable {
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
         return fileChooser;
-    }
-
-    /**
-     * Save the current Tree
-     * TODO implement
-     */
-    @FXML
-    protected void save() {
-//        FileChooser fileChooser = buildFileChooser("Save Current Tree");
-        doSave();
-    }
-
-    /**
-     * TODO
-     */
-    private void doSave() {
-        System.out.println("Save");
-    }
-
-    /**
-     * Creates and shows a "help" window.
-     * TODO add help information
-     */
-    @FXML
-    protected void showHelp() {
-        try {
-            FXMLLoader loader = new FXMLLoader(ApplicationWindow.class.getResource("help-modal.fxml"));
-            Parent root = loader.load();
-
-            Stage stage = buildModal("Help", root);
-            stage.showAndWait();
-        } catch (IOException e) {
-            System.out.println("Failed to create a new dialog box: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Edit an existing Node
-     * TODO
-     */
-    @FXML
-    protected void editNode() {
-        System.out.println("Edit Node");
-    }
-
-    /**
-     * Save and close an open Graph
-     * TODO
-     */
-    public void closeGraph() {
-        System.out.println("Close List Item");
-        listSelector.getSelectionModel().clearSelection();
-    }
-
-    /**
-     * Saves and Exits the application
-     */
-    @FXML
-    protected void exitApplication() {
-        doSave();
-        Platform.exit();
-    }
-
-    /**
-     * @return  the root <code>Stage</code> object
-     */
-    private Stage getStage() {
-        return (Stage) header.getScene().getWindow();
-    }
-
-    /**
-     * Returns the <code>Pane</code> object that is at the center of the application's main window.
-     * @return  the {@link #contentPane}
-     */
-    public Pane getContentPane() {
-        return contentPane;
     }
 
 }

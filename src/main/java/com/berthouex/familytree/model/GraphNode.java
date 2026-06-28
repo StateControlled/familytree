@@ -1,5 +1,6 @@
 package com.berthouex.familytree.model;
 
+import javafx.event.EventHandler;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -11,14 +12,17 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+
+import com.berthouex.familytree.controller.ApplicationWindow;
 
 /**
  * Represents a Node on a Graph, or a person on a family tree.
  *
  * @see Graph
  */
-public class GraphNode extends StackPane {
+public class GraphNode extends StackPane implements Comparable<GraphNode> {
     private static final Paint DEFAULT_COLOR = new Color(0.42, 0.49, 0.68, 0.85);
     private static final float DEFAULT_WIDTH = 96.0f;
     private static final float DEFAULT_HEIGHT = 128.f;
@@ -90,12 +94,69 @@ public class GraphNode extends StackPane {
             this.setLayoutY(this.getLayoutY() + e.getY() - y);
         });
 
-        this.setOnMouseClicked(e -> {
-            System.out.println(firstName + " " + lastName);
-            System.out.println(birthDate);
-            System.out.println(deathDate);
-            System.out.println(biography);
-        });
+    }
+
+    /**
+     * Connects the {@link #setOnMouseClicked(EventHandler)} method with the {@link OnClickCallback} interface to allow an
+     * outer class to potentially access this <code>GraphNode</code>'s class field information.
+     *
+     * @param callback  an <code>OnClickCallback</code> interface
+     */
+    public void setNodeOnMouseClicked(OnClickCallback callback) {
+        this.setOnMouseClicked(e -> callback.onGraphNodeClick(
+            new NodeData(
+                this.nodeId,
+                this.firstName,
+                this.lastName,
+                this.biography,
+                this.birthDate,
+                this.deathDate,
+                this.age
+            )
+        ));
+    }
+
+    /**
+     * Facilitates communication between this <code>GraphNode</code> and a calling method, by exposing all the data this <code>GraphNode</code>
+     * contains in a single data object.
+     */
+    public interface OnClickCallback {
+        void onGraphNodeClick(NodeData data);
+    }
+
+    /**
+     * A read-only data transfer object to facilitate communicating information from a {@link GraphNode} to the {@link ApplicationWindow} GUI.
+     */
+    public record NodeData(String nodeId, String firstName, String lastName, String biography, LocalDate birthDate, LocalDate deathDate, int age) {
+        /**
+         * Returns the first and last names concatenated, separated by a space.
+         *
+         * @return  the full name
+         */
+        public String getFullName() {
+            return firstName + " " + lastName;
+        }
+
+        /**
+         * @return  <code>true</code> if the birthdate is not null
+         */
+        public boolean hasBirthdate() {
+            return this.birthDate != null;
+        }
+
+        /**
+         * @return  <code>true</code> if the death date is not null
+         */
+        public boolean hasDeathDate() {
+            return this.deathDate != null;
+        }
+
+        /**
+         * @return  <code>true</code> if the biography is not null
+         */
+        public boolean hasBiography() {
+            return this.biography != null;
+        }
     }
 
     /**
@@ -148,7 +209,8 @@ public class GraphNode extends StackPane {
         private LocalDate deathDate;
 
         public Builder() {
-
+            this.firstName = "";
+            this.lastName = "";
         }
 
         public Builder firstName(String firstName) {
@@ -325,6 +387,24 @@ public class GraphNode extends StackPane {
     public void setYPos(float y) {
         this.y = y;
         this.setLayoutY(y);
+    }
+
+    @Override
+    public int compareTo(GraphNode that) {
+        return this.nodeId.compareTo(that.nodeId);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if ( !(other instanceof GraphNode that) ) {
+            return false;
+        }
+        return Objects.equals(this.nodeId, that.nodeId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nodeId, firstName, lastName);
     }
 
     /**

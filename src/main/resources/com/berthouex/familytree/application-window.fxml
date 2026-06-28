@@ -66,7 +66,7 @@
             <Button fx:id="closeTree" text="Close Tree" onAction="#closeGraph" styleClass="button"/>
             <Separator/>
             <Label fx:id="listSelectorLabel" text="Open Trees:" styleClass="label"/>
-            <ListView fx:id="listSelector" VBox.vgrow="ALWAYS"/>
+            <ListView fx:id="graphListView" VBox.vgrow="ALWAYS"/>
         </VBox>
     </left>
 
@@ -94,6 +94,9 @@
                 </HBox>
 
                 <TextArea fx:id="nodeBiography" />
+
+                <Separator/>
+                <Button fx:id="saveNodeEditsButton" text="Save" onAction="#updateNode" styleClass="button"/>
 
             </VBox>
 
