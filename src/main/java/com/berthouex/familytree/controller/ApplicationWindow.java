@@ -135,6 +135,7 @@ public class ApplicationWindow implements Initializable {
 
     /**
      * TODO add edit graph functionality
+     * Opens a new <code>GraphModal</code> and creates a new <code>Graph</code>, then opens that graph.
      * @return
      */
     private Optional<Graph> showGraphDialog() {
@@ -156,6 +157,7 @@ public class ApplicationWindow implements Initializable {
 
     /**
      * Opens the New Node modal and allows a user to create a new Node, which is then added to the currently open/selected <code>Graph</code>.
+     * If somehow there is no open graph, this does nothing.
      */
     @FXML
     protected void createNewNode() {
@@ -300,7 +302,7 @@ public class ApplicationWindow implements Initializable {
     }
 
     /**
-     * Saves and Exits the application.
+     * Save all open <code>Graphs</code> and Exits the application with {@link Platform#exit()}
      */
     @FXML
     protected void exitApplication() {
@@ -380,6 +382,9 @@ public class ApplicationWindow implements Initializable {
 
 
     /**
+     * Returns the <code>Stage</code> this <code>ApplicationWindow</code> exists within.
+     * Assumes there will always be a {@link #header} object to reference.
+     *
      * @return  the root <code>Stage</code> object
      */
     private Stage getStage() {
