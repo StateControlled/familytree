@@ -96,6 +96,21 @@ public class GraphNode extends StackPane implements Comparable<GraphNode> {
 
     }
 
+
+    public boolean addParent(GraphNode parent) {
+        if (!parentNodes.contains(parent)) {
+            this.parentNodes.add(parent);
+        }
+        return false;
+    }
+
+    public boolean addChild(GraphNode child) {
+        if (!childNodes.contains(child)) {
+            this.childNodes.add(child);
+        }
+        return false;
+    }
+
     /**
      * Connects the {@link #setOnMouseClicked(EventHandler)} method with the {@link OnClickCallback} interface to allow an
      * outer class to potentially access this <code>GraphNode</code>'s class field information.
@@ -103,17 +118,7 @@ public class GraphNode extends StackPane implements Comparable<GraphNode> {
      * @param callback  an <code>OnClickCallback</code> interface
      */
     public void setNodeOnMouseClicked(OnClickCallback callback) {
-        this.setOnMouseClicked(e -> callback.onGraphNodeClick(
-            new NodeData(
-                this.nodeId,
-                this.firstName,
-                this.lastName,
-                this.biography,
-                this.birthDate,
-                this.deathDate,
-                this.age
-            )
-        ));
+        this.setOnMouseClicked(e -> callback.onGraphNodeClick(this));
     }
 
     /**
@@ -121,42 +126,7 @@ public class GraphNode extends StackPane implements Comparable<GraphNode> {
      * contains in a single data object.
      */
     public interface OnClickCallback {
-        void onGraphNodeClick(NodeData data);
-    }
-
-    /**
-     * A read-only data transfer object to facilitate communicating information from a {@link GraphNode} to the {@link ApplicationWindow} GUI.
-     */
-    public record NodeData(String nodeId, String firstName, String lastName, String biography, LocalDate birthDate, LocalDate deathDate, int age) {
-        /**
-         * Returns the first and last names concatenated, separated by a space.
-         *
-         * @return  the full name
-         */
-        public String getFullName() {
-            return firstName + " " + lastName;
-        }
-
-        /**
-         * @return  <code>true</code> if the birthdate is not null
-         */
-        public boolean hasBirthdate() {
-            return this.birthDate != null;
-        }
-
-        /**
-         * @return  <code>true</code> if the death date is not null
-         */
-        public boolean hasDeathDate() {
-            return this.deathDate != null;
-        }
-
-        /**
-         * @return  <code>true</code> if the biography is not null
-         */
-        public boolean hasBiography() {
-            return this.biography != null;
-        }
+        void onGraphNodeClick(GraphNode data);
     }
 
     /**
@@ -368,6 +338,36 @@ public class GraphNode extends StackPane implements Comparable<GraphNode> {
      */
     public void setBiography(String biography) {
         this.biography = biography;
+    }
+
+    /**
+     * Returns the first and last names concatenated, separated by a space.
+     *
+     * @return  the full name
+     */
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
+    /**
+     * @return  <code>true</code> if the birthdate is not null
+     */
+    public boolean hasBirthdate() {
+        return this.birthDate != null;
+    }
+
+    /**
+     * @return  <code>true</code> if the death date is not null
+     */
+    public boolean hasDeathDate() {
+        return this.deathDate != null;
+    }
+
+    /**
+     * @return  <code>true</code> if the biography is not null
+     */
+    public boolean hasBiography() {
+        return this.biography != null;
     }
 
     public String getNodeId() {

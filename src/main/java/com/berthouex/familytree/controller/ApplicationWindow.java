@@ -166,7 +166,7 @@ public class ApplicationWindow implements Initializable {
 
             result.ifPresent(node -> {
                 currentGraph.addNode(node);
-                node.setNodeOnMouseClicked(this::selectNode);
+                node.setNodeOnMouseClicked(e -> selectNode(e));
                 statusLabel.setText("Created New Node");
             });
 
@@ -200,6 +200,10 @@ public class ApplicationWindow implements Initializable {
         }
 
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // BASIC FUNCTION
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Creates and shows a "help" window.
@@ -312,7 +316,7 @@ public class ApplicationWindow implements Initializable {
 
 
     ///////////////////////////////////////////////////////////////////////////
-    //
+    // SELECT
     ///////////////////////////////////////////////////////////////////////////
 
 
@@ -321,7 +325,9 @@ public class ApplicationWindow implements Initializable {
      *
      * @param node  the <code>GraphNode</code> to select
      */
-    private void selectNode(GraphNode.NodeData node) {
+    private void selectNode(GraphNode node) {
+        clearNodeInfoPanel();
+
         boolean hasNode = (node != null);
         nodeInfoPanel.setVisible(hasNode);
         nodeInfoPanel.setManaged(hasNode);
@@ -330,19 +336,27 @@ public class ApplicationWindow implements Initializable {
         if (node != null) {
             statusLabel.setText("Selected Node " + node.getFullName());
 
-            nodeFirstName.setText(node.firstName());
-            nodeLastName.setText(node.lastName());
+            nodeFirstName.setText(node.getFirstName());
+            nodeLastName.setText(node.getLastName());
 
             if (node.hasBirthdate()) {
-                nodeBirthDate.setValue(node.birthDate());
+                nodeBirthDate.setValue(node.getBirthDate());
             }
             if (node.hasDeathDate()) {
-                nodeDeathDate.setValue(node.deathDate());
+                nodeDeathDate.setValue(node.getDeathDate());
             }
             if (node.hasBiography()) {
-                nodeBiography.setText(node.biography());
+                nodeBiography.setText(node.getBiography());
             }
         }
+    }
+
+    private void clearNodeInfoPanel() {
+        nodeFirstName.setText(null);
+        nodeLastName.setText(null);
+        nodeBirthDate.setValue(null);
+        nodeDeathDate.setValue(null);
+        nodeBiography.setText(null);
     }
 
     /**
@@ -377,7 +391,7 @@ public class ApplicationWindow implements Initializable {
 
 
     ///////////////////////////////////////////////////////////////////////////
-    //
+    // MISC
     ///////////////////////////////////////////////////////////////////////////
 
 

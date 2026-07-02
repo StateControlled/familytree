@@ -9,6 +9,7 @@ module com.berthouex.familytree {
     requires java.xml;
     requires javafx.graphics;
     requires javafx.base;
+    requires com.berthouex.familytree;
 
     opens com.berthouex.familytree to javafx.fxml;
     exports com.berthouex.familytree;
